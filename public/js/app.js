@@ -1882,6 +1882,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 var axios = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
@@ -1905,6 +1906,7 @@ var axios = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
     fatchArticles: function fatchArticles(url) {
       var _this = this;
 
+      this.edit = false;
       url = url || '/api/index';
       axios.get(url).then(function (response) {
         _this.articles = response.data;
@@ -1929,14 +1931,26 @@ var axios = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
     addArticle: function addArticle() {
       var _this2 = this;
 
-      axios.post('/api/article/create', {
-        title: this.article.title,
-        body: this.article.body
-      }).then(function (response) {
-        _this2.fatchArticles();
-      })["catch"](function (error) {
-        console.log(error);
-      });
+      if (this.edit === false) {
+        axios.post('/api/article/create', {
+          title: this.article.title,
+          body: this.article.body
+        }).then(function (response) {
+          _this2.fatchArticles();
+        })["catch"](function (error) {
+          console.log(error);
+        });
+      } else {
+        axios.put('/api/article/edit', {
+          id: this.article.id,
+          title: this.article.title,
+          body: this.article.body
+        }).then(function (response) {
+          _this2.fatchArticles();
+        })["catch"](function (error) {
+          console.log(error);
+        });
+      }
     },
     deleteArticle: function deleteArticle(article_id) {
       var _this3 = this;
@@ -1950,7 +1964,7 @@ var axios = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
       });
     },
     editArticle: function editArticle(article) {
-      this.article.id = article.id;
+      this.edit = true, this.article.id = article.id;
       this.article.title = article.title;
       this.article.body = article.body;
     }
@@ -2401,14 +2415,23 @@ var render = function() {
             })
           ]),
           _vm._v(" "),
-          _c(
-            "button",
-            {
-              staticClass: "btn btn-primary btn-block",
-              attrs: { type: "submit" }
-            },
-            [_vm._v("Create Article")]
-          )
+          _vm.edit
+            ? _c(
+                "button",
+                {
+                  staticClass: "btn btn-primary btn-block",
+                  attrs: { type: "submit" }
+                },
+                [_vm._v("Update Article")]
+              )
+            : _c(
+                "button",
+                {
+                  staticClass: "btn btn-primary btn-block",
+                  attrs: { type: "submit" }
+                },
+                [_vm._v("Create Article")]
+              )
         ]
       ),
       _vm._v(" "),

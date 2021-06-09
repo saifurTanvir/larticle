@@ -9,7 +9,8 @@
             <div class="form-group">
                 <textarea class="form-control" placeholder="enter description" v-model="article.body"></textarea>
             </div>
-            <button type="submit" class="btn btn-primary btn-block">Create Article</button>
+            <button type="submit" class="btn btn-primary btn-block" v-if="edit">Update Article</button>
+            <button type="submit" class="btn btn-primary btn-block" v-else>Create Article</button>
         </form>
 
         <div class="card mt-3" v-for="article in articles.data" v-bind:key="article.id">
@@ -58,6 +59,7 @@
 
         methods: {
             fatchArticles: function(url){
+                this.edit = false;
                 url = url || '/api/index';
                 axios.get(url)
                 .then( (response) => {
@@ -96,7 +98,8 @@
                         console.log(error);
                     });
                 }else{
-                    axios.post('/api/article/edit',{_method: 'put'},{
+                    axios.put('/api/article/edit',{
+                        id: this.article.id,
                         title: this.article.title,
                         body: this.article.body
                     })
